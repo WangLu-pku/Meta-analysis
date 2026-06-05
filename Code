@@ -1,0 +1,828 @@
+#R. Software###
+
+setwd('C:/Users/wangl)
+library(metafor)
+library(meta)
+library(ggplot2)
+
+  pdf("funnel plot-prenatal.pdf", width = 17, height = 20)    
+    par(mfrow=c(8,6), mar = c(4, 4, 2, 1))
+#prenatal exposures
+  ##pm2.5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #height-smd
+    data <- data.frame(
+      b = c(-0.16,-0.14), 
+      lower = c(-1.42,-0.34), 
+      upper = c(1.11,0.06)  #
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+    ##weight
+    data <- data.frame(
+      b = c(0.04,0.522),
+      lower = c(-0.11,-0.522),
+      upper = c(0.2,1.478), 
+      stringsAsFactors = FALSE  
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and weight")
+   
+    #weight-z
+    data <- data.frame(
+      b = c(-0.245,0.052,-0.154), 
+      lower = c(-0.433,0.039,-0.302), 
+      upper = c(-0.038,0.069,-0.006)
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and weight-z")
+    egger_test <- regtest(data$b, se, model = "rma")
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    funnel(tf_result,  xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and weight-z TF")   
+    
+    #weight-smd
+    data <- data.frame(
+      b = c(0.02,0.68,-0.25,0.05,-0.15),
+      lower = c(-0.06,-0.68,-0.42,0.04,-0.3), 
+      upper = c(0.16,1.92,-0.04,0.07,-0.01) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and weight SMD")
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    funnel(tf_result,  xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and weight SMD TF")  
+    
+    #BMI
+    data <- data.frame(
+      b = c(0.003,0.071,0.01,0.14,0.385,0.02), 
+      lower = c(0,-0.214,-0.02,-0.02,-0.769,0.0), 
+      upper = c(0.006,0.321,0.04,0.3,1.538,0.05) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and bmi")
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and bmi TF")  
+    
+    #BMI-Z
+    data <- data.frame(
+      b = c(-0.226, 0.12, 0.38,0.44,-0.3,0.02,0.12,
+            -0.31,-0.18,0.06,0.06,0.16,0,0.02,0.08,0.061),
+      lower = c(-0.433, 0, 0.2,0.2,-0.456,0,-0.05,
+                -0.61,-0.43,-0.1,-0.2,0.06,-0.09,-0.07,-0.35,0.047),
+      upper = c(-0.188, 0.23, 0.55,0.66,-0.144,0.02,0.28,
+                -0.02,0.07,0.21,0.32,0.26,0.09,0.11,0.52,0.075)
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and bmi-z")
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test)
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "pm2.5 and bmi-z TF")   # 绘制填补后的漏斗图
+    
+    #BMI-SMD
+    data <- data.frame(
+      b = c(0.06,-0.21,0.07,0.38,0.44,-0.3,0.02,0.12,
+            -0.31,-0.18,0.06,0.06,0.16,0,0.02,0.08,0.06),
+      lower = c(-0.18,-0.4,0,0.2,0.2,-0.46,0,-0.05,
+                -0.61,-0.43,-0.1,-0.2,0.06,-0.09,-0.07,-0.35,0.05), 
+      upper = c(0.27,-0.18,0.14,0.56,0.66,-0.14,0.02,0.28,
+                -0.02,0.07,0.21,0.32,0.26,0.09,0.11,0.52,0.08) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and BMI SMD")
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and BMI SMD TF") 
+  
+  ##pm10~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #weight
+    data <- data.frame(
+      b = c(0.01,0.2),
+      lower = c(-0.04,-0.14),
+      upper = c(0.05,0.51) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+    #weight-z
+    data <- data.frame(
+      b = c(0.008,-0.07),
+      lower = c(0.006,-0.16), 
+      upper = c(0.01,0.03) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+    #weight-smd
+    data <- data.frame(
+      b = c(0.01,0.26,0.01,-0.07), 
+      lower = c(-0.02,-0.18,0.01,-0.16), 
+      upper = c(0.03,0.66,0.01,0.03) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    se[se <= 0.0001] <- 0.1
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "PM10 and weight SMD")
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "PM10 and weight SMD TF") 
+    
+    #BMI
+    data <- data.frame(
+      b = c(0.037,0.04),
+      lower = c(0.021,0.00), 
+      upper = c(0.052,0.09) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "FE")
+    summary(res)
+    
+    #BMI-Z
+    data <- data.frame(
+      b = c(-0.259,0.03),
+      lower = c(-0.668,0),
+      upper = c(0.149,0.06) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+  #no2~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #height-smd
+    data <- data.frame(
+      b = c(0.23,-0.03), 
+      lower = c(-0.09,-0.06), 
+      upper = c(0.56,0.02) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+    #weight
+    data <- data.frame(
+      b = c(-0.03,0.31), 
+      lower = c(-0.17,0.04), 
+      upper = c(0.05,0.51) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+      
+    #weight-z
+    data <- data.frame(
+      b = c(-0.035,0.011),
+      lower = c(-0.074,0.008), 
+      upper = c(0.01,0.014) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+    #weight-smd
+    data <- data.frame(
+      b = c(-0.02,0.4,-0.04,0.01), 
+      lower = c(-0.1,005,-0.07,0.01),
+      upper = c(0.07,0.65,0.01,0.01) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    se[se <= 0.0001] <- 0.1
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "no2 and weight SMD")
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "no2 and weight SMD TF")  
+    
+    #bmi
+    data <- data.frame(
+      b = c(0.12,0.06), 
+      lower = c(0.04,-0.08),
+      upper = c(0.2,0.21) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+    #BMI-Z
+    data <- data.frame(
+      b = c(-0.025,0.04,0.05,-0.03,-0.01,
+            0.01,0.05,0.03,0,-0.01,-0.06),
+      lower = c(-0.069,-0.07,0.01,-0.09,-0.1,
+                -0.04,-0.03,-0.01,-0.02,-0.05,-0.36),
+      upper = c(0.015,0.15,0.09,0.03,0.08,
+                0.06,0.13,0.06,0.03,0.02,0.24) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "NO2 and bmi-z")
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result)
+    funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "no2 and bmi-z TF") 
+    
+   
+  #O3~~~~~~~~~~~~
+    #weight-z
+    data <- data.frame(
+      b = c(0.005,0.046),
+      lower = c(0.004,0.009),
+      upper = c(0.006,0.083) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+    #weight-smd
+    data <- data.frame(
+      b = c(-0.27,0.01,0.06), 
+      lower = c(-0.6,0,0.01), 
+      upper = c(0.05,0.01,0.1)  
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "o3 and weight SMD")
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "o3 and weight SMD TF") 
+    
+    #bmi-z
+    data <- data.frame(
+      b = c(0.08,-0.04),
+      lower = c(0.04,-0.08),
+      upper = c(0.12,0.01) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+    #WFL-z
+    data <- data.frame(
+      b = c(-0.03,0.08),
+      lower = c(-0.07,0.04), 
+      upper = c(0.02,0.12) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+  #肥胖-孕前
+    #pm2.5
+    data <- data.frame(
+      or = c(1,0.856,1.17,1.373,1.02,1.43,
+             0.97,0.79,0.93,1.51,1.49,1.14,1.01,1.07,1.76), 
+      lower = c(0.94,0.604,0.66,1,0.98,0.92,
+                0.39,0.47,0.58,0.89,1.2,0.81,0.79,0.9,0.97), 
+      upper = c(1,1.176,2.02,1.833,1.03,2.06,
+                1.85,1.26,1.46,2.4,1.79,1.48,1.27,1.27,2.38)  
+    )
+    log_or=log(data$or)
+    log_se<-(log(data$upper)-log(data$lower))/1.96/2
+    res <- rma(yi = log_or, sei=log_se, method = "REML")
+    res$I2
+    paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+    res$pval
+    funnel(res, xlab = "Log(RR)", ylab = "Standard Error",main = "PM2.5 and OWOB")
+    #egger检验
+    egger_test <- regtest(res, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result)  
+    paste0(round(exp(tf_result$beta),digits=3),'(',round(exp(tf_result$ci.lb),digits=3),',',round(exp(tf_result$ci.ub),digits=3),')')
+    funnel(tf_result,xlab = "Log(RR)", ylab = "Standard Error",main = "PM2.5 and OWOB TF")   
+    
+    #no2
+    data <- data.frame(
+      or = c(1.01,0.976,1.14,0.88,0.99,0.99,
+             1.09,1.06,1,1.01,1.29),
+      lower = c(1.01,0.914,1.03,0.74,0.84,0.85,
+                0.91,0.97,0.94,0.94,0.75), 
+      upper = c(1.02,1.042,1.26,1.02,1.15,1.15,
+                1.29,1.15,1.06,1.07,1.87) 
+    )
+    log_or=log(data$or)
+    log_se<-(log(data$upper)-log(data$lower))/1.96/2
+    res <- rma(yi = log_or, sei=log_se, method = "REML")
+    res$I2
+    paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+    res$pval
+    funnel(res, xlab = "Log(RR)", ylab = "Standard Error",main = "no2 and OWOB")
+    egger_test <- regtest(res, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    paste0(round(exp(tf_result$beta),digits=3),'(',round(exp(tf_result$ci.lb),digits=3),',',round(exp(tf_result$ci.ub),digits=3),')')
+    funnel(tf_result,xlab = "Log(RR)", ylab = "Standard Error",main = "no2 and OWOB TF")   
+    
+    dev.off()
+    
+    
+#postnatal
+    pdf("funnel plot-postnatal.pdf", width = 17, height = 20)
+    
+    par(mfrow=c(8,6), mar = c(4, 4, 2, 1))
+    ##pm2.5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ##weight
+    data <- data.frame(
+      b = c(1.5,0.04), 
+      lower = c(0.6,-0.11),
+      upper = c(2.4,0.2), 
+      stringsAsFactors = FALSE  
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+    #BMI
+    data <- data.frame(
+      b = c(0.01,1,0.14,0.26), # AUC值
+      lower = c(-0.03,0.7,-0.02,0.08), # CI下限
+      upper = c(0.02,1.3,0.3,0.43)  # CI上限
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and bmi")
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test) 
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and bmi TF") 
+    
+    #BMI-Z
+    data <- data.frame(
+      b = c(-0.28, 0.3,0.12,0.11,0.4,0.03,-0.04,-0.29,
+            -0.18,0.08,-0.2,0.25,-0.4,0.02,0.06,-0.95),
+      lower = c(-0.74,0.2,0,0.05,0.17,0.02,-0.13,-0.53,
+                -0.32,-0.09,-0.58,0.16,-0.56,-0.08,-0.13,-1.59),
+      upper = c(0.18,0.4,0.23,0.18,0.66,0.05,0.04,-0.05,
+                -0.03,0.25,0.17,0.34,0.25,0.11,0.24,-0.32) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and bmi-z")
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test) 
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "pm2.5 and bmi-z TF")    
+
+  ##pm10~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #weight-smd
+    data <- data.frame(
+      b = c(0.01,-0.07), 
+      lower = c(-0.02,-0.13), 
+      upper = c(0.03,0) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    se[se <= 0.0001] <- 0.1
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+       
+    #BMI
+    data <- data.frame(
+      b = c(0.22,0.04), 
+      lower = c(-0.17,0.00), 
+      upper = c(0.67,0.09) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "FE")
+    summary(res)
+    
+    #BMI-Z
+    data <- data.frame(
+      b = c(-0.13,-0.12,0.03),
+      lower = c(-0.61,-0.29,0), 
+      upper = c(0.3,0.05,0.06) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "PM10 and BMI SMD")
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result)  
+    funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "PM10 and BMI SMD TF")  
+    
+    #BMI-SMD
+    data <- data.frame(
+      b = c(0.06,-0.13,-0.11,0.02),
+      lower = c(-0.04,-0.63,-0.27,0), 
+      upper = c(0.17,0.31,0.05,0.04) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    se[se <= 0.0001] <- 0.1
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "PM10 and BMI SMD")
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "PM10 and BMI SMD TF") 
+    
+    #no2~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #bmi
+    data <- data.frame(
+      b = c(-0.06,0.06), 
+      lower = c(-0.16,-0.08), 
+      upper = c(0.24,0.21)
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+    #BMI-Z
+    data <- data.frame(
+      b = c(-0.05,0.04,0.02,-0.05,-0.06,0.06,
+            -0.22,0.04,-0.04,0,0.03,-0.28), 
+      lower = c(-0.14,-0.07,-0.01,-0.12,-0.12,0,
+                -0.4,0.02,-0.08,-0.04,-0.04,-0.57),
+      upper = c(0.04,0.15,0.06,0.02,0,0.13,
+                -0.04,0.07,0,0.03,0.09,0)
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "NO2 and bmi-z")
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "no2 and bmi-z TF")   
+    
+    #BMI-SMD
+    data <- data.frame(
+      b = c(-0.02,-0.05,0.03,0.02,-0.05,-0.06,
+            0.06,-0.22,0.04,-0.04,0,0.02,-0.28), 
+      lower = c(-0.04,-0.13,-0.04,-0.01,-0.12,-0.12,
+                0,-0.4,0.02,-0.08,-0.04,-0.04,-0.57), 
+      upper = c(0.06,0.04,0.09,0.06,0.02,0,
+                0.13,-0.04,0.07,0,0.03,0.09,0)
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    se[se <= 0.0001] <- 0.1
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    funnel(data$b, se, xlab = "Effect Size", ylab = "Standard Error",main = "no2 and BMI SMD")
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test) 
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "no2 and BMI SMD TF") 
+    
+  #O3~~~~~~~~~~~~
+    #BMI-SMD
+    data <- data.frame(
+      b = c(0.011,-0.04), 
+      lower = c(0.07,-0.08),
+      upper = c(0.16,0.02)
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+  #O3~~~~~~~~~~~~
+    #bmi-z
+    data <- data.frame(
+      b = c(0.08,0.01), 
+      lower = c(0.04,-0.02),
+      upper = c(0.12,0.05) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+    #WFL-z
+    data <- data.frame(
+      b = c(-0.01,0.08), 
+      lower = c(-0.05,0.04),
+      upper = c(0.03,0.12) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+  
+    
+#postnatal exposure-OWOB
+    #pm1
+    data <- data.frame(
+      or = c(1.19,1.56),
+      lower = c(1.1,1.54),
+      upper = c(1.28,1.58)  
+    )
+    log_or=log(data$or)
+    log_se<-(log(data$upper)-log(data$lower))/1.96/2
+    res <- rma(yi = log_or, sei=log_se, method = "REML")
+    res$I2
+    paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+    res$pval
+    
+    #pm2.5
+    data <- data.frame(
+      or = c(1.050,1.45,1,1.04,2.302,1.44,1.373,1.03,1.01,
+             1.18,0.39,0.96,1.33,0.83,1.54,0.49,1.08,1.35,0.08), 
+      lower = c(1.01,1.45,0.94,0.56,1.670,1.21,1,1,1.01,
+                0.85,0.15,0.72,0.83,0.33,1.22,0.31,0.81,0.94,0.02),
+      upper = c(1.11,1.46,1,1.96,3.207,1.72,1.833,1.06,1.017,
+                1.58,0.87,1.24,2.09,1.84,1.89,0.73,1.43,1.87,0.46) 
+    )
+    log_or=log(data$or)
+    log_se<-(log(data$upper)-log(data$lower))/1.96/2
+    res <- rma(yi = log_or, sei=log_se, method = "REML")
+    res$I2
+    paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+    res$pval
+    funnel(res, xlab = "Log(RR)", ylab = "Standard Error",main = "PM2.5 and OWOB")
+    egger_test <- regtest(res, model = "rma")
+    print(egger_test) 
+    tf_result <- trimfill(res)
+    summary(tf_result)  
+    paste0(round(exp(tf_result$beta),digits=3),'(',round(exp(tf_result$ci.lb),digits=3),',',round(exp(tf_result$ci.ub),digits=3),')')
+    funnel(tf_result,xlab = "Log(RR)", ylab = "Standard Error",main = "PM2.5 and OWOB TF")  
+   
+     #pm10
+    data <- data.frame(
+      or = c(1.07,1.17,1.03,0.97), 
+      lower = c(1.04,1.16,1.03,0.77),
+      upper = c(1.1,1.18,1.05,1.23) 
+    )
+    log_or=log(data$or)
+    log_se<-(log(data$upper)-log(data$lower))/1.96/2
+    res <- rma(yi = log_or, sei=log_se, method = "REML")
+    res$I2
+    paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+    res$pval
+    funnel(res, xlab = "Log(RR)", ylab = "Standard Error",main = "PM10 and OWOB")
+    egger_test <- regtest(res, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    paste0(round(exp(tf_result$beta),digits=3),'(',round(exp(tf_result$ci.lb),digits=3),',',round(exp(tf_result$ci.ub),digits=3),')')
+    funnel(tf_result,xlab = "Log(RR)", ylab = "Standard Error",main = "PM10 and OWOB TF")  
+    
+    #no2
+    data <- data.frame(
+      or = c(1.386,1.16,1.43,1.01,0.99,1.14,0.8,0.97,
+             1.18,0.66,1.1,0.93,1,1.12,0.29),
+      lower = c(1.119,1.04,1.42,1.01,0.86,1.01,0.64,0.86,
+                0.99,0.41,1.01,0.86,0.91,0.98,0.1), 
+      upper = c(1.695,1.29,1.45,1.02,1.12,1.28,0.99,1.09,
+                1.41,1.05,1.19,1,1.09,1.28,0.73) 
+    )
+    log_or=log(data$or)
+    log_se<-(log(data$upper)-log(data$lower))/1.96/2
+    res <- rma(yi = log_or, sei=log_se, method = "REML")
+    res$I2
+    paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+    res$pval
+    funnel(res, xlab = "Log(RR)", ylab = "Standard Error",main = "no2 and OWOB")
+    egger_test <- regtest(res, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result)  #
+    paste0(round(exp(tf_result$beta),digits=3),'(',round(exp(tf_result$ci.lb),digits=3),',',round(exp(tf_result$ci.ub),digits=3),')')
+    funnel(tf_result,xlab = "Log(RR)", ylab = "Standard Error",main = "no2 and OWOB TF") 
+  
+      #co
+    data <- data.frame(
+      or = c(1.006,1.022), 
+      lower = c(1.003,1.022), 
+      upper = c(1.009,1.023)  
+    )
+    log_or=log(data$or)
+    log_se<-(log(data$upper)-log(data$lower))/1.96/2
+    res <- rma(yi = log_or, sei=log_se, method = "REML")
+    res$I2
+    paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+    res$pval
+   
+     #so2
+    data <- data.frame(
+      or = c(1.07,1.86),
+      lower = c(1.03,1.84), 
+      upper = c(1.12,1.88) 
+    )
+    log_or=log(data$or)
+    log_se<-(log(data$upper)-log(data$lower))/1.96/2
+    res <- rma(yi = log_or, sei=log_se, method = "REML")
+    res$I2
+    paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+    res$pval
+    
+    #o3
+    data <- data.frame(
+      or = c(0.97,1.14,0.94), 
+      lower = c(0.83,1.13,0.62), 
+      upper = c(1.14,1.15,1.42) 
+    )
+    log_or=log(data$or)
+    log_se<-(log(data$upper)-log(data$lower))/1.96/2
+    res <- rma(yi = log_or, sei=log_se, method = "REML")
+    res$I2
+    paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+    res$pval
+    funnel(res, xlab = "Log(RR)", ylab = "Standard Error",main = "O3 and OWOB")
+    egger_test <- regtest(res, model = "rma")
+    print(egger_test)  
+    tf_result <- trimfill(res)
+    summary(tf_result) 
+    paste0(round(exp(tf_result$beta),digits=3),'(',round(exp(tf_result$ci.lb),digits=3),',',round(exp(tf_result$ci.ub),digits=3),')')
+    funnel(tf_result,xlab = "Log(RR)", ylab = "Standard Error",main = "O3 and OWOB TF")    
+    
+    dev.off()   
+        
+#sensitivity analysis-excluding studies with multiple cohorts~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#prenatal
+  ##pm2.5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   #BMI-Z
+    data <- data.frame(
+      b = c(-0.226, 0.12, 0.38,0.44,-0.3,0.02,0.061), 
+      lower = c(-0.433, 0, 0.2,0.2,-0.456,0,0.047),
+      upper = c(-0.188, 0.23, 0.55,0.66,-0.144,0.02,0.075) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test)  
+    
+    #BMI-SMD
+    data <- data.frame(
+      b = c(0.06,-0.21,0.07,0.38,0.44,-0.3,0.02,0.06), 
+      lower = c(-0.18,-0.4,0,0.2,0.2,-0.46,0,0.05), 
+      upper = c(0.27,-0.18,0.14,0.56,0.66,-0.14,0.02,0.08) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test) 
+    
+  #no2~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #BMI-Z
+    data <- data.frame(
+      b = c(-0.025,0.04), 
+      lower = c(-0.069,-0.07),
+      upper = c(0.015,0.15) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    
+  #prenatal-OWOB
+    #pm2.5
+    data <- data.frame(
+      or = c(1,0.856,1.17,1.373,1.02), 
+      lower = c(0.94,0.604,0.66,1,0.98), 
+      upper = c(1,1.176,2.02,1.833,1.03) 
+    )
+    log_or=log(data$or)
+    log_se<-(log(data$upper)-log(data$lower))/1.96/2
+    res <- rma(yi = log_or, sei=log_se, method = "REML")
+    res$I2
+    paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+    res$pval
+    egger_test <- regtest(res, model = "rma")
+    print(egger_test)  
+     
+    #no2
+    data <- data.frame(
+      or = c(1.01,0.976), 
+      lower = c(1.01,0.914), 
+      upper = c(1.02,1.042) 
+    )
+    log_or=log(data$or)
+    log_se<-(log(data$upper)-log(data$lower))/1.96/2
+    res <- rma(yi = log_or, sei=log_se, method = "REML")
+    res$I2
+    paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+    res$pval
+    
+  #postnatal
+    ##pm2.5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #BMI-Z
+    data <- data.frame(
+      b = c(-0.28, 0.3,0.12,0.11,0.4,0.03),
+      lower = c(-0.74,0.2,0,0.05,0.17,0.02),
+      upper = c(0.18,0.4,0.23,0.18,0.66,0.05)  
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test)  
+  
+    #no2~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #BMI-Z
+    data <- data.frame(
+      b = c(-0.05,0.04),
+      lower = c(-0.14,-0.07),
+      upper = c(0.04,0.15) 
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+     
+    #BMI-SMD
+    data <- data.frame(
+      b = c(-0.02,-0.05,0.03),
+      lower = c(-0.04,-0.13,-0.04),
+      upper = c(0.06,0.04,0.09)
+    )
+    se<-(data$upper-data$lower)/1.96/2
+    se[se <= 0.0001] <- 0.1
+    res <- rma(yi = data$b, sei=se, method = "REML")
+    summary(res)
+    egger_test <- regtest(data$b, se, model = "rma")
+    print(egger_test) 
+     
+ #postnatal-OWOB
+    #pm2.5
+    data <- data.frame(
+      or = c(1,1.04,2.302,1.44,1.373,1.03,1.01), 
+      lower = c(0.94,0.56,1.670,1.21,1,1,1.01), 
+      upper = c(1,1.96,3.207,1.72,1.833,1.06,1.017) 
+    )
+    log_or=log(data$or)
+    log_se<-(log(data$upper)-log(data$lower))/1.96/2
+    res <- rma(yi = log_or, sei=log_se, method = "REML")
+    res$I2
+    paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+    res$pval
+    egger_test <- regtest(res, model = "rma")
+    print(egger_test) 
+    
+    #pm10
+    data <- data.frame(
+      or = c(1.03,0.97), 
+      lower = c(1.03,0.77), 
+      upper = c(1.05,1.23) 
+    )
+    log_or=log(data$or)
+    log_se<-(log(data$upper)-log(data$lower))/1.96/2
+    res <- rma(yi = log_or, sei=log_se, method = "REML")
+    res$I2
+    paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+    res$pval
+    
+   #no2
+    data <- data.frame(
+      or = c(1.386,1.01,0.99), 
+      lower = c(1.119,1.01,0.86), 
+      upper = c(1.695,1.02,1.12)  
+    )
+    log_or=log(data$or)
+    log_se<-(log(data$upper)-log(data$lower))/1.96/2
+    res <- rma(yi = log_or, sei=log_se, method = "REML")
+    res$I2
+    paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+    res$pval
+    egger_test <- regtest(res, model = "rma")
+    print(egger_test) 
+    
+###review quality########################
+    #kappa
+    tab <- matrix(c(
+      61,22,137,9071
+    ), nrow = 2,
+    byrow = TRUE)
+    
+    library(epiR)
+    epi.kappa(tab)
+    
