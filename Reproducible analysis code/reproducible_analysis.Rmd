@@ -1,0 +1,948 @@
+---
+title: "Reproducible Analysis of the Systematic Review and Meta-analysis"
+author: "luwang"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(readxl)
+library(metafor)
+library(meta)
+library(ggplot2)
+library(dplyr)
+dat <- read_excel("data/Study_data.xlsx")
+```
+
+
+## Prenatal exposure analyses
+
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+##pm2.5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#height-smd
+data1 <- filter(dat,exposure_window=='pre',exposure=='pm25',outcome=='height')
+data2 <- filter(dat,exposure_window=='pre',exposure=='pm25',outcome=='height_z')
+data<-rbind(data1,data2)
+data$se<-(data$upper_smd-data$lower_smd)/1.96/2
+res <- rma(yi = data$effect_smd, sei=data$se, method = "REML")
+summary(res)
+
+##weight
+data <- filter(dat,exposure_window=='pre',exposure=='pm25',outcome=='weight')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+#weight-z
+data <- filter(dat,exposure_window=='pre',exposure=='pm25',outcome=='weight_z')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+#Funnel
+funnel(res, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and weight-z")
+#egger
+egger_test <- regtest(data$effect, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,  xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and weight-z TF")  
+
+#weight-smd
+data1 <- filter(dat,exposure_window=='pre',exposure=='pm25',outcome=='weight')
+data2 <- filter(dat,exposure_window=='pre',exposure=='pm25',outcome=='weight_z')
+data<-rbind(data1,data2)
+data$se<-(data$upper_smd-data$lower_smd)/1.96/2
+res <- rma(yi = data$effect_smd, sei=data$se, method = "REML")
+summary(res)
+#Funnel
+funnel(data$effect_smd, data$se, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and weight SMD")
+#egger
+egger_test <- regtest(data$effect_smd, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,  xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and weight SMD TF")  
+
+#BMI
+data <- filter(dat,exposure_window=='pre',exposure=='pm25',outcome=='bmi')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+#Funnel
+funnel(res, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and bmi")
+#egger
+egger_test <- regtest(data$effect, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and bmi TF")  
+
+#BMI-Z
+data <- filter(dat,exposure_window=='pre',exposure=='pm25',outcome=='bmi_z')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+#Funnel
+funnel(res, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and bmi-z")
+#egger
+egger_test <- regtest(data$effect, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "pm2.5 and bmi-z TF")  
+#meta regression
+res <- rma(
+  yi = effect, sei=se, method = "REML",
+  mods = ~ country,data=data
+)
+summary(res)
+
+res <- rma(
+  yi = effect, sei=se, method = "REML",
+  mods = ~ year,data=data
+)
+summary(res)
+
+res <- rma(
+  yi = effect, sei=se, method = "REML",
+  mods = ~ nos,data=data
+)
+summary(res)
+
+
+
+#BMI-SMD
+data1 <- filter(dat,exposure_window=='pre',exposure=='pm25',outcome=='bmi')
+data2 <- filter(dat,exposure_window=='pre',exposure=='pm25',outcome=='bmi_z')
+data<-rbind(data1,data2)
+data$se<-(data$upper_smd-data$lower_smd)/1.96/2
+res <- rma(yi = data$effect_smd, sei=data$se, method = "REML")
+summary(res)
+#Funnel
+funnel(data$effect_smd, data$se, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and BMI SMD")
+#egger
+egger_test <- regtest(data$effect_smd, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and BMI SMD TF")  
+
+##pm10~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#weight
+data <- filter(dat,exposure_window=='pre',exposure=='pm10',outcome=='weight')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+#weight-z
+data <- filter(dat,exposure_window=='pre',exposure=='pm10',outcome=='weight_z')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+#weight-smd
+data1 <- filter(dat,exposure_window=='pre',exposure=='pm10',outcome=='weight')
+data2 <- filter(dat,exposure_window=='pre',exposure=='pm10',outcome=='weight_z')
+data<-rbind(data1,data2)
+data$se<-(data$upper_smd-data$lower_smd)/1.96/2
+res <- rma(yi = data$effect_smd, sei=data$se, method = "REML")
+summary(res)
+#Funnel
+funnel(res, xlab = "Effect Size", ylab = "Standard Error",main = "PM10 and weight SMD")
+#egger
+egger_test <- regtest(data$effect_smd, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "PM10 and weight SMD TF")  
+
+#BMI
+data <- filter(dat,exposure_window=='pre',exposure=='pm10',outcome=='bmi')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+#BMI-Z
+data <- filter(dat,exposure_window=='pre',exposure=='pm10',outcome=='bmi_z')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+#no2~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#height-smd
+data1 <- filter(dat,exposure_window=='pre',exposure=='no2',outcome=='height')
+data2 <- filter(dat,exposure_window=='pre',exposure=='no2',outcome=='height_z')
+data<-rbind(data1,data2)
+data$se<-(data$upper_smd-data$lower_smd)/1.96/2
+res <- rma(yi = data$effect_smd, sei=data$se, method = "REML")
+summary(res)
+
+#weight
+data <- filter(dat,exposure_window=='pre',exposure=='no2',outcome=='weight')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+#weight-z
+data <- filter(dat,exposure_window=='pre',exposure=='no2',outcome=='weight_z')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+#weight-smd
+data1 <- filter(dat,exposure_window=='pre',exposure=='no2',outcome=='weight')
+data2 <- filter(dat,exposure_window=='pre',exposure=='no2',outcome=='weight_z')
+data<-rbind(data1,data2)
+data$se<-(data$upper_smd-data$lower_smd)/1.96/2
+res <- rma(yi = data$effect_smd, sei=data$se, method = "REML")
+summary(res)
+
+#Funnel
+funnel(data$effect_smd, data$se, xlab = "Effect Size", ylab = "Standard Error",main = "no2 and weight SMD")
+#egger
+egger_test <- regtest(data$effect_smd, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "no2 and weight SMD TF")  
+
+#bmi
+data <- filter(dat,exposure_window=='pre',exposure=='no2',outcome=='bmi')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+#BMI-Z
+data <- filter(dat,exposure_window=='pre',exposure=='no2',outcome=='bmi_z')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+
+
+#Funnel
+funnel(res, xlab = "Effect Size", ylab = "Standard Error",main = "NO2 and bmi-z")
+#egger
+egger_test <- regtest(data$effect, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "no2 and bmi-z TF")  
+
+#meta regression
+res <- rma(
+  yi = effect, sei=se, method = "REML",
+  mods = ~ country,data=data
+)
+summary(res)
+
+res <- rma(
+  yi = effect, sei=se, method = "REML",
+  mods = ~ year,data=data
+)
+summary(res)
+
+res <- rma(
+  yi = effect, sei=se, method = "REML",
+  mods = ~ nos,data=data
+)
+summary(res)
+
+#O3~~~~~~~~~~~~
+#weight-z
+data <- filter(dat,exposure_window=='pre',exposure=='o3',outcome=='weight_z')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+#weight-smd
+data1 <- filter(dat,exposure_window=='pre',exposure=='o3',outcome=='weight')
+data2 <- filter(dat,exposure_window=='pre',exposure=='o3',outcome=='weight_z')
+data<-rbind(data1,data2)
+data$se<-(data$upper_smd-data$lower_smd)/1.96/2
+res <- rma(yi = data$effect_smd, sei=data$se, method = "REML")
+summary(res)
+#Funnel
+funnel(data$effect_smd, data$se, xlab = "Effect Size", ylab = "Standard Error",main = "o3 and weight SMD")
+#egger
+egger_test <- regtest(data$effect_smd, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "o3 and weight SMD TF")  
+
+#bmi-z
+data <- filter(dat,exposure_window=='pre',exposure=='o3',outcome=='bmi_z')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+#WFL-z
+data <- filter(dat,exposure_window=='pre',exposure=='o3',outcome=='wfl_z')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+```
+
+
+## Postnatal exposure analyses
+
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+##pm2.5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##weight
+data <- filter(dat,exposure_window=='post',exposure=='pm25',outcome=='weight')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+#BMI
+data <- filter(dat,exposure_window=='post',exposure=='pm25',outcome=='bmi')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+#Funnel
+funnel(res, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and bmi")
+#egger
+egger_test <- regtest(data$effect, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and bmi TF")  
+
+#BMI-Z
+data <- filter(dat,exposure_window=='post',exposure=='pm25',outcome=='bmi_z')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+
+#Funnel
+funnel(res, xlab = "Effect Size", ylab = "Standard Error",main = "PM2.5 and bmi-z")
+#egger
+egger_test <- regtest(data$effect, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "pm2.5 and bmi-z TF")  
+
+#meta regression
+res <- rma(
+  yi = effect, sei=se, method = "REML",
+  mods = ~ country,data=data
+)
+summary(res)
+
+res <- rma(
+  yi = effect, sei=se, method = "REML",
+  mods = ~ year,data=data
+)
+summary(res)
+
+res <- rma(
+  yi = effect, sei=se, method = "REML",
+  mods = ~ nos,data=data
+)
+summary(res)
+
+
+##pm10~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#weight-smd
+data1 <- filter(dat,exposure_window=='post',exposure=='pm10',outcome=='weight')
+data2 <- filter(dat,exposure_window=='post',exposure=='pm10',outcome=='weight_z')
+data<-rbind(data1,data2)
+data$se<-(data$upper_smd-data$lower_smd)/1.96/2
+res <- rma(yi = data$effect_smd, sei=data$se, method = "REML")
+summary(res)
+
+#BMI
+data <- filter(dat,exposure_window=='post',exposure=='pm10',outcome=='bmi')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+#BMI-Z
+data <- filter(dat,exposure_window=='post',exposure=='pm10',outcome=='bmi_z')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+#Funnel
+funnel(res, xlab = "Effect Size", ylab = "Standard Error",main = "PM10 and BMI SMD")
+#egger
+egger_test <- regtest(data$effect, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "PM10 and BMI SMD TF")  
+
+#BMI-SMD
+data1 <- filter(dat,exposure_window=='post',exposure=='pm10',outcome=='bmi')
+data2 <- filter(dat,exposure_window=='post',exposure=='pm10',outcome=='bmi_z')
+data<-rbind(data1,data2)
+data$se<-(data$upper_smd-data$lower_smd)/1.96/2
+res <- rma(yi = data$effect_smd, sei=data$se, method = "REML")
+summary(res)
+#Funnel
+funnel(res, xlab = "Effect Size", ylab = "Standard Error",main = "PM10 and BMI SMD")
+#egger
+egger_test <- regtest(data$effect, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "PM10 and BMI SMD TF")  
+
+#no2~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#bmi
+data <- filter(dat,exposure_window=='post',exposure=='no2',outcome=='bmi')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+#BMI-Z
+data <- filter(dat,exposure_window=='post',exposure=='no2',outcome=='bmi_z')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+
+
+#Funnel
+funnel(res, xlab = "Effect Size", ylab = "Standard Error",main = "NO2 and bmi-z")
+#egger
+egger_test <- regtest(data$effect, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "no2 and bmi-z TF")  
+
+#meta regression
+res <- rma(
+  yi = effect, sei=se, method = "REML",
+  mods = ~ country,data=data
+)
+summary(res)
+
+res <- rma(
+  yi = effect, sei=se, method = "REML",
+  mods = ~ year,data=data
+)
+summary(res)
+
+res <- rma(
+  yi = effect, sei=se, method = "REML",
+  mods = ~ nos,data=data
+)
+summary(res)
+#BMI-SMD
+data1 <- filter(dat,exposure_window=='post',exposure=='no2',outcome=='bmi')
+data2 <- filter(dat,exposure_window=='post',exposure=='no2',outcome=='bmi_z')
+data<-rbind(data1,data2)
+data$se<-(data$upper_smd-data$lower_smd)/1.96/2
+res <- rma(yi = data$effect_smd, sei=data$se, method = "REML")
+summary(res)
+#Funnel
+funnel(res, xlab = "Effect Size", ylab = "Standard Error",main = "no2 and BMI SMD")
+#egger
+egger_test <- regtest(data$effect, data$se, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+funnel(tf_result,xlab = "Effect Size", ylab = "Standard Error",main = "no2 and BMI SMD TF")  
+
+#nox~~~~~~~~~~~~~~
+#bmi-smd
+data1 <- filter(dat,exposure_window=='post',exposure=='nox',outcome=='bmi')
+data2 <- filter(dat,exposure_window=='post',exposure=='nox',outcome=='bmi_z')
+data<-rbind(data1,data2)
+data$se<-(data$upper_smd-data$lower_smd)/1.96/2
+res <- rma(yi = data$effect_smd, sei=data$se, method = "REML")
+summary(res)
+
+
+#O3~~~~~~~~~~~~
+#bmi-z
+data <- filter(dat,exposure_window=='post',exposure=='o3',outcome=='bmi_z')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+
+#WFL-z
+data <- filter(dat,exposure_window=='post',exposure=='o3',outcome=='wfl_z')
+data$se<-(data$upper-data$lower)/1.96/2
+res <- rma(yi = data$effect, sei=data$se, method = "REML")
+summary(res)
+```
+
+
+## Prenatal exposure and owob
+
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+#pm2.5~~~~~~~~~~~~~~~~~~~~~~
+data <- filter(dat,exposure_window=='pre',exposure=='pm25',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+
+
+
+#Funnel
+funnel(res, xlab = "Log(RR)", ylab = "Standard Error",main = "PM2.5 and OWOB")
+#egger
+egger_test <- regtest(res, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+paste0(round(exp(tf_result$beta),digits=3),'(',round(exp(tf_result$ci.lb),digits=3),',',round(exp(tf_result$ci.ub),digits=3),')')
+funnel(tf_result,xlab = "Log(RR)", ylab = "Standard Error",main = "PM2.5 and OWOB TF")  
+
+#meta regression
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$country
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$year
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$nos
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+
+#no2
+data <- filter(dat,exposure_window=='pre',exposure=='no2',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+
+
+
+
+#Funnel
+funnel(res, xlab = "Log(RR)", ylab = "Standard Error",main = "no2 and OWOB")
+#egger
+egger_test <- regtest(res, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+paste0(round(exp(tf_result$beta),digits=3),'(',round(exp(tf_result$ci.lb),digits=3),',',round(exp(tf_result$ci.ub),digits=3),')')
+funnel(tf_result,xlab = "Log(RR)", ylab = "Standard Error",main = "no2 and OWOB TF")  
+
+#meta regression
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$country
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$year
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$nos
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+
+```
+
+
+## Postnatal exposure and owob
+
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+#pm1
+data <- filter(dat,exposure_window=='post',exposure=='pm1',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+
+#pm2.5
+data <- filter(dat,exposure_window=='post',exposure=='pm25',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+
+
+
+#Funnel
+funnel(res, xlab = "Log(RR)", ylab = "Standard Error",main = "PM2.5 and OWOB")
+#egger
+egger_test <- regtest(res, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+paste0(round(exp(tf_result$beta),digits=3),'(',round(exp(tf_result$ci.lb),digits=3),',',round(exp(tf_result$ci.ub),digits=3),')')
+funnel(tf_result,xlab = "Log(RR)", ylab = "Standard Error",main = "PM2.5 and OWOB TF")  
+
+#meta regression
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$country
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$year
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$nos
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+
+#meta regression
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$country
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$year
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$nos
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+
+#pm10
+data <- filter(dat,exposure_window=='post',exposure=='pm10',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+
+#Funnel
+funnel(res, xlab = "Log(RR)", ylab = "Standard Error",main = "PM10 and OWOB")
+#egger
+egger_test <- regtest(res, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+paste0(round(exp(tf_result$beta),digits=3),'(',round(exp(tf_result$ci.lb),digits=3),',',round(exp(tf_result$ci.ub),digits=3),')')
+funnel(tf_result,xlab = "Log(RR)", ylab = "Standard Error",main = "PM10 and OWOB TF")  
+
+#no2
+data <- filter(dat,exposure_window=='post',exposure=='no2',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+
+
+
+
+#Funnel
+funnel(res, xlab = "Log(RR)", ylab = "Standard Error",main = "no2 and OWOB")
+#egger
+egger_test <- regtest(res, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+paste0(round(exp(tf_result$beta),digits=3),'(',round(exp(tf_result$ci.lb),digits=3),',',round(exp(tf_result$ci.ub),digits=3),')')
+funnel(tf_result,xlab = "Log(RR)", ylab = "Standard Error",main = "no2 and OWOB TF")  
+
+#meta regression
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$country
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$year
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+
+res <- rma(
+  yi =  log_or, sei=log_se, method = "REML",
+  mods = ~ data$nos
+)
+summary(res)
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+
+#co
+data <- filter(dat,exposure_window=='post',exposure=='co',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+
+#so2
+data <- filter(dat,exposure_window=='post',exposure=='so2',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+
+#o3
+data <- filter(dat,exposure_window=='post',exposure=='o3',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+
+#Funnel
+funnel(res, xlab = "Log(RR)", ylab = "Standard Error",main = "O3 and OWOB")
+#egger
+egger_test <- regtest(res, model = "rma")
+print(egger_test)  
+
+tf_result <- trimfill(res)
+summary(tf_result) 
+paste0(round(exp(tf_result$beta),digits=3),'(',round(exp(tf_result$ci.lb),digits=3),',',round(exp(tf_result$ci.ub),digits=3),')')
+funnel(tf_result,xlab = "Log(RR)", ylab = "Standard Error",main = "O3 and OWOB TF")  
+
+```
+
+
+## Subgroup analyses by overweight/obesity definition
+
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+#who definition
+dat <- read_excel("data/Study_data.xlsx")
+dat<-filter(dat,definition==1)
+#owob-prenatal
+#pm2.5
+data <- filter(dat,exposure_window=='pre',exposure=='pm25',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+
+#No2
+data <- filter(dat,exposure_window=='pre',exposure=='no2',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+
+
+#owob-postnatal
+#pm2.5
+data <- filter(dat,exposure_window=='post',exposure=='pm25',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+#pm10
+data <- filter(dat,exposure_window=='post',exposure=='pm10',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+#no2
+data <- filter(dat,exposure_window=='post',exposure=='no2',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+
+#iotf~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+dat <- read_excel("data/Study_data.xlsx")
+dat<-filter(dat,definition==2)
+#pm1
+data <- filter(dat,exposure_window=='post',exposure=='pm1',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+#pm2.5
+data <- filter(dat,exposure_window=='post',exposure=='pm25',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+#pm10
+data <- filter(dat,exposure_window=='post',exposure=='pm10',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+#no2
+data <- filter(dat,exposure_window=='post',exposure=='no2',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+#co
+data <- filter(dat,exposure_window=='post',exposure=='co',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+
+#so2
+data <- filter(dat,exposure_window=='post',exposure=='so2',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+
+#o3
+data <- filter(dat,exposure_window=='post',exposure=='o3',outcome=='owob')
+log_or=log(data$effect)
+log_se<-(log(data$upper)-log(data$lower))/1.96/2
+res <- rma(yi = log_or, sei=log_se, method = "REML")
+res$I2
+paste0(round(exp(res$beta),digits=3),'(',round(exp(res$ci.lb),digits=3),',',round(exp(res$ci.ub),digits=3),')')
+res$pval
+```
+
+
+## Review quality assessment
+
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+#kappa for study selection
+tab <- matrix(c(
+  61,22,37,9171
+), nrow = 2,
+byrow = TRUE)
+
+library(epiR)
+epi.kappa(tab)
+
+#ICC for NOS
+library(irr)
+data <- data.frame(
+  rater1 = c(6,6,6,7,7,8,7,8,8,8,5,7,6,8,6,6,7,7,
+             6,6,7,5,7,7,7,7,7,6,8,6,8,7,7,8,7,8,8,6,7,8,
+             8, 7,7,7,6,7,5,7,7,7,7,8,7,8,7,7,7
+  ),
+  rater2 = c(6,6,6,7,7,7,6,7,6,7,5,7,6,7,6,5,7,6,
+             7,6,8,5,7,7,7,7,7,6,8,6,8,7,7,6,7,8,7,6,6,8,
+             8, 7,7,7,6,7,5,7,7,7,7,8,7,8,7,7,7)
+)
+icc(data,
+    model = "twoway",
+    type = "agreement",
+    unit = "single")
+```
+
